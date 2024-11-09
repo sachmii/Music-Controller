@@ -1,0 +1,24 @@
+# Django #
+*.log
+*.pot
+*.pyc
+__pycache__/
+db.sqlite3
+
+# Virtual Environments #
+venv/
+
+# Node modules #
+node_modules/
+
+# React build files #
+build/
+
+# VS Code Settings #
+.vscode/
+
+# Environment variables #
+.env
+
+# Mac OS #
+.DS_Store
