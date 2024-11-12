@@ -101,7 +101,7 @@ class LeaveRoom(APIView):
 
         return Response({'Bad Request': 'You are not in any room'}, status=status.HTTP_400_BAD_REQUEST);
 
-class UpdateView(APIView):
+class UpdateRoom(APIView):
     serializer_class = UpdateRoomSerializer
 
     def patch(self, request, format=None):
