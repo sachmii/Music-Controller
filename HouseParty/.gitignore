@@ -22,3 +22,6 @@ build/
 
 # Mac OS #
 .DS_Store
+
+# Credentials\
+credentials.py
