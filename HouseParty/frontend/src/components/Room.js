@@ -1,37 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Grid, Button, Typography } from "@material-ui/core";
+import { Grid, Button, Typography } from "@mui/material";
 import CreateRoomPage from "./CreateRoomPage";
 
 function Room({ leaveRoomCallback }) {
   const { roomCode } = useParams();
   const navigate = useNavigate();
 
-  const [state, setState] = useState({
+  const [roomDetails, setRoomDetails] = useState({
     votesToSkip: 2,
     guestCanPause: false,
     isHost: false,
-    showSettings: false,
   });
+  const [showSettings, setShowSettings] = useState(false);
 
   const getRoomDetails = () => {
-    return fetch(`/api/get-room?code=${roomCode}`)
+    fetch(`/api/get-room?code=${roomCode}`)
       .then((response) => {
         if (!response.ok) {
           leaveRoomCallback();
-          navigate("/"); // Redirect if room code is invalid
+          navigate("/");
           return null;
         }
         return response.json();
       })
       .then((data) => {
         if (data) {
-          setState((prevState) => ({
-            ...prevState,
+          setRoomDetails({
             votesToSkip: data.votes_to_skip,
             guestCanPause: data.guest_can_pause,
             isHost: data.is_host,
-          }));
+          });
         }
       })
       .catch((error) => {
@@ -50,61 +49,37 @@ function Room({ leaveRoomCallback }) {
     });
   };
 
-  const updateShowSettings = (value) => {
-    setState((prevState) => ({
-      ...prevState,
-      showSettings: value,
-    }));
-  };
-
-  const renderSettings = () => {
-    return (
-      <Grid container spacing={1} align="center">
-        <Grid item xs={12}>
-          <CreateRoomPage
-            update={true}
-            votesToSkip={state.votesToSkip}
-            guestCanPause={state.guestCanPause}
-            roomCode={roomCode}
-            updateCallback={getRoomDetails}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={() => updateShowSettings(false)}
-          >
-            Close
-          </Button>
-        </Grid>
-      </Grid>
-    );
-  };
-
-  const renderSettingsButton = () => {
-    return (
-      <Grid item xs={12} align="center">
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => updateShowSettings(true)}
-        >
-          Settings
-        </Button>
-      </Grid>
-    );
+  const handleSettingsClose = () => {
+    setShowSettings(false);
+    getRoomDetails(); // Re-fetch room details when settings are closed
   };
 
   useEffect(() => {
     getRoomDetails();
   }, [roomCode]);
 
-  if (state.showSettings) {
-    return renderSettings();
-  }
-
-  return (
+  return showSettings ? (
+    <Grid container spacing={1} align="center">
+      <Grid item xs={12}>
+        <CreateRoomPage
+          update
+          votesToSkip={roomDetails.votesToSkip}
+          guestCanPause={roomDetails.guestCanPause}
+          roomCode={roomCode}
+          updateCallback={handleSettingsClose} // Use this callback to close settings and refresh room details
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={handleSettingsClose}
+        >
+          Close
+        </Button>
+      </Grid>
+    </Grid>
+  ) : (
     <Grid container spacing={1} align="center">
       <Grid item xs={12}>
         <Typography variant="h6" component="h6">
@@ -113,20 +88,30 @@ function Room({ leaveRoomCallback }) {
       </Grid>
       <Grid item xs={12}>
         <Typography variant="h6" component="h6">
-          Votes: {state.votesToSkip}
+          Votes: {roomDetails.votesToSkip}
         </Typography>
       </Grid>
       <Grid item xs={12}>
         <Typography variant="h6" component="h6">
-          Guest Can Pause: {state.guestCanPause?.toString()}
+          Guest Can Pause: {roomDetails.guestCanPause.toString()}
         </Typography>
       </Grid>
       <Grid item xs={12}>
         <Typography variant="h6" component="h6">
-          Host: {state.isHost?.toString()}
+          Host: {roomDetails.isHost.toString()}
         </Typography>
       </Grid>
-      {state.isHost ? renderSettingsButton() : null}
+      {roomDetails.isHost && (
+        <Grid item xs={12} align="center">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setShowSettings(true)}
+          >
+            Settings
+          </Button>
+        </Grid>
+      )}
       <Grid item xs={12}>
         <Button
           variant="contained"
