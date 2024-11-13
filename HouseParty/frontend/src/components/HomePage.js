@@ -8,7 +8,6 @@ import {
   Route,
   Routes,
   Link,
-  useRoutes,
   Navigate,
 } from "react-router-dom";
 
@@ -60,12 +59,23 @@ export default class HomePage extends Component {
   }
 
   render() {
+    const { roomCode } = this.state;
+
     return (
       <Router>
         <Routes>
-          <Route exact path="/" element={this.renderHomePage()} />
-          <Route path="/join/*" element={<RoomJoinPage />} />
-          <Route path="/create/" element={<CreateRoomPage />} />
+          <Route
+            path="/"
+            element={
+              roomCode ? (
+                <Navigate replace to={`/room/${roomCode}`} />
+              ) : (
+                this.renderHomePage()
+              )
+            }
+          />
+          <Route path="/join" element={<RoomJoinPage />} />
+          <Route path="/create" element={<CreateRoomPage />} />
           <Route
             path="/room/:roomCode"
             element={<Room leaveRoomCallback={this.clearRoomCode} />}

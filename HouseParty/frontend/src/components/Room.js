@@ -13,6 +13,7 @@ function Room({ leaveRoomCallback }) {
     isHost: false,
   });
   const [showSettings, setShowSettings] = useState(false);
+  const [spotifyAuthenticated, setSpotifyAuthenticated] = useState(false);
 
   const getRoomDetails = () => {
     fetch(`/api/get-room?code=${roomCode}`)
@@ -31,11 +32,30 @@ function Room({ leaveRoomCallback }) {
             guestCanPause: data.guest_can_pause,
             isHost: data.is_host,
           });
+          if (data.is_host) {
+            authenticateSpotify();
+          }
         }
       })
       .catch((error) => {
         console.error("Error fetching room details:", error);
       });
+  };
+
+  const authenticateSpotify = () => {
+    fetch("/spotify/is-authenticated")
+      .then((response) => response.json())
+      .then((data) => {
+        setSpotifyAuthenticated(data.status);
+        if (!data.status) {
+          fetch("/spotify/get-auth-url")
+            .then((response) => response.json())
+            .then((data) => {
+              window.location.replace(data.url);
+            });
+        }
+      });
+    console.log(">> authenticateSpotify method finished");
   };
 
   const leaveButtonPressed = () => {
