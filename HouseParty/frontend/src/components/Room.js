@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Grid, Button, Typography } from "@mui/material";
 import CreateRoomPage from "./CreateRoomPage";
+import MusicPlayer from "./MusicPlayer";
 
 function Room({ leaveRoomCallback }) {
   const { roomCode } = useParams();
@@ -135,17 +136,7 @@ function Room({ leaveRoomCallback }) {
           Code: {roomCode}
         </Typography>
       </Grid>
-      <Grid item xs={12}>
-        {song && Object.keys(song).length > 0 ? (
-          <Typography variant="h6" component="h6">
-            Now Playing: {song.title} by {song.artist}
-          </Typography>
-        ) : (
-          <Typography variant="h6" component="h6">
-            No song is currently playing.
-          </Typography>
-        )}
-      </Grid>
+      <MusicPlayer {...song} />
       {roomDetails.isHost && (
         <Grid item xs={12} align="center">
           <Button
