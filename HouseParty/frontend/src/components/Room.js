@@ -14,6 +14,7 @@ function Room({ leaveRoomCallback }) {
   });
   const [showSettings, setShowSettings] = useState(false);
   const [spotifyAuthenticated, setSpotifyAuthenticated] = useState(false);
+  const [song, setSong] = useState({});
 
   const getRoomDetails = () => {
     fetch(`/api/get-room?code=${roomCode}`)
@@ -58,6 +59,28 @@ function Room({ leaveRoomCallback }) {
     console.log(">> authenticateSpotify method finished");
   };
 
+  const getCurrentSong = () => {
+    fetch("/spotify/current-song")
+      .then((response) => {
+        if (!response.ok) {
+          console.error("Failed to fetch the current song");
+          return {};
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data && data.title && data.artist) {
+          setSong(data);
+        } else {
+          setSong(null);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching current song:", error);
+        setSong(null);
+      });
+  };
+
   const leaveButtonPressed = () => {
     const requestOptions = {
       method: "POST",
@@ -76,7 +99,13 @@ function Room({ leaveRoomCallback }) {
 
   useEffect(() => {
     getRoomDetails();
-  }, [roomCode]);
+
+    // Set up interval to fetch the current song every second
+    const interval = setInterval(getCurrentSong, 1000);
+
+    // Cleanup the interval when the component unmounts
+    return () => clearInterval(interval);
+  }, [roomCode]); // Re-run if roomCode changes
 
   return showSettings ? (
     <Grid container spacing={1} align="center">
@@ -102,24 +131,20 @@ function Room({ leaveRoomCallback }) {
   ) : (
     <Grid container spacing={1} align="center">
       <Grid item xs={12}>
-        <Typography variant="h6" component="h6">
+        <Typography variant="h4" component="h4">
           Code: {roomCode}
         </Typography>
       </Grid>
       <Grid item xs={12}>
-        <Typography variant="h6" component="h6">
-          Votes: {roomDetails.votesToSkip}
-        </Typography>
-      </Grid>
-      <Grid item xs={12}>
-        <Typography variant="h6" component="h6">
-          Guest Can Pause: {roomDetails.guestCanPause.toString()}
-        </Typography>
-      </Grid>
-      <Grid item xs={12}>
-        <Typography variant="h6" component="h6">
-          Host: {roomDetails.isHost.toString()}
-        </Typography>
+        {song && Object.keys(song).length > 0 ? (
+          <Typography variant="h6" component="h6">
+            Now Playing: {song.title} by {song.artist}
+          </Typography>
+        ) : (
+          <Typography variant="h6" component="h6">
+            No song is currently playing.
+          </Typography>
+        )}
       </Grid>
       {roomDetails.isHost && (
         <Grid item xs={12} align="center">
