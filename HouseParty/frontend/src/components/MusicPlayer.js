@@ -20,6 +20,7 @@ function MusicPlayer({
   image_url,
   is_playing,
   votes,
+  votes_required,
   id,
 }) {
   const pauseSong = () => {
@@ -42,6 +43,18 @@ function MusicPlayer({
     fetch("/spotify/play", requestOptions).then((response) => {
       if (!response.ok) {
         console.log("could not play the song");
+      }
+    });
+  };
+
+  const skipSong = () => {
+    const requestOptions = {
+      method: "POST",
+      header: { "Content-type": "application/json" },
+    };
+    fetch("/spotify/skip", requestOptions).then((response) => {
+      if (!response.ok) {
+        console.log("could not skip the song");
       }
     });
   };
@@ -83,7 +96,7 @@ function MusicPlayer({
             >
               {is_playing ? <PauseIcon /> : <PlayArrowIcon />}
             </IconButton>
-            <IconButton>
+            <IconButton onClick={() => skipSong()}>
               <SkipNextIcon />
             </IconButton>
           </Box>
@@ -95,7 +108,7 @@ function MusicPlayer({
           />
 
           <Typography variant="body2" align="center" style={{ marginTop: 10 }}>
-            Votes: {votes}
+            Votes: {votes}/{votes_required}
           </Typography>
         </Grid>
       </Grid>

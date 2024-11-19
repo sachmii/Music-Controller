@@ -1,3 +1,37 @@
+/* Motion background animation */
+.motion-background {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: linear-gradient(
+    45deg,
+    #ffd1dc,
+    #ffebb9,
+    #a7c7e7,
+    #d5e8d4,
+    #cdb4db
+  );
+  background-size: 400% 400%; /* This creates the effect of the background moving */
+  animation: motion-background 15s ease infinite; /* Adjust the duration for speed */
+  z-index: -1;
+}
+
+/* Animation for smooth color transitions */
+@keyframes motion-background {
+  0% {
+    background-position: 0% 50%; /* Start at the left */
+  }
+  50% {
+    background-position: 100% 50%; /* Move to the right */
+  }
+  100% {
+    background-position: 0% 50%; /* Loop back to the left */
+  }
+}
+
+/* Adjust other styles */
 html,
 body,
 #app {
@@ -13,14 +47,10 @@ body,
   top: 0;
 }
 
-#app {
-  width: 100%;
-  height: 100%;
-}
-
 .center {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  z-index: 1; /* Ensures content is above the background */
 }
