@@ -6,6 +6,7 @@ import {
   IconButton,
   LinearProgress,
   Box,
+  responsiveFontSizes,
 } from "@mui/material";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import SkipNextIcon from "@mui/icons-material/SkipNext";
@@ -21,6 +22,30 @@ function MusicPlayer({
   votes,
   id,
 }) {
+  const pauseSong = () => {
+    const requestOptions = {
+      method: "PUT",
+      header: { "Content-type": "application/json" },
+    };
+    fetch("/spotify/pause", requestOptions).then((response) => {
+      if (!response.ok) {
+        console.log("could not pause the song");
+      }
+    });
+  };
+
+  const playSong = () => {
+    const requestOptions = {
+      method: "PUT",
+      header: { "Content-type": "application/json" },
+    };
+    fetch("/spotify/play", requestOptions).then((response) => {
+      if (!response.ok) {
+        console.log("could not play the song");
+      }
+    });
+  };
+
   const songProgress = (time / duration) * 100;
 
   return (
@@ -51,7 +76,11 @@ function MusicPlayer({
           </Typography>
 
           <Box display="flex" justifyContent="center" alignItems="center">
-            <IconButton>
+            <IconButton
+              onClick={() => {
+                is_playing ? pauseSong() : playSong();
+              }}
+            >
               {is_playing ? <PauseIcon /> : <PlayArrowIcon />}
             </IconButton>
             <IconButton>
