@@ -16,8 +16,6 @@ Feel free to explore the code, leave feedback, or suggest new features I could i
 ## Installation
 
 ### Prerequisites
-- Python 3.8+ installed (for Django)
-- Node.js and npm installed (for React)
 - Docker and Docker Compose installed (for running the app with Docker)
 
 ### Getting Started
