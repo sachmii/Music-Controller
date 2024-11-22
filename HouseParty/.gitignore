@@ -1,8 +1,10 @@
 # Django #
-*.log
-*.pot
 *.pyc
 __pycache__/
+db.sqlite3
+*.pyo
+*.pyd
+*.db
 db.sqlite3
 
 # Virtual Environments #
@@ -22,6 +24,11 @@ build/
 
 # Mac OS #
 .DS_Store
+Thumbs.db
 
 # Credentials\
 credentials.py
+
+*.log
+docker-compose.override.yml
+.docker/
